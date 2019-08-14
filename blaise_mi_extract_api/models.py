@@ -28,6 +28,21 @@ class Survey(db.Model):
     allocation_lookup = db.Column(db.String(255))
 
 
+class FieldPeriod(db.Model):
+    # uncomment the tables args for SQL Server schemas
+    # __table_args__ = {"schema": "dbo"}
+    id = db.Column(db.Integer(), primary_key=True)
+    stage = db.Column(db.String(4))
+    live_start_date = db.Column(db.Date())
+    live_end_date = db.Column(db.Date())
+    interview_start_date = db.Column(db.Date())
+    interview_end_date = db.Column(db.Date())
+    allocation_date = db.Column(db.Date())
+    edit_start_date = db.Column(db.Date())
+    data_delivery_start_date = db.Column(db.Date())
+    scatter_date = db.Column(db.Date())
+
+
 class DictMixin(object):
     def merge_dict(self, source_dict):
         for key, value in source_dict.items():
