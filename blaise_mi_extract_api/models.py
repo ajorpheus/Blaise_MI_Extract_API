@@ -43,6 +43,22 @@ class FieldPeriod(db.Model):
     scatter_date = db.Column(db.Date())
 
 
+class Instrument(db.Model):
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(255))
+    survey_id = db.Column(db.Integer())
+    field_period_id = db.Column(db.Integer())
+    phase = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+    questionnaire_deployment_status = db.Column(db.String(255))
+    case_deployment_status = db.Column(db.String(255))
+    collection_start_date = db.Column(db.DATETIME())
+    collection_end_date = db.Column(db.DATETIME())
+    validation_rules = db.Column(db.TEXT())
+    MI_spec = db.Column(db.TEXT())
+
+
 class DictMixin(object):
     def merge_dict(self, source_dict):
         for key, value in source_dict.items():
