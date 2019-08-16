@@ -86,8 +86,4 @@ def map_to_management_info(management_info_query):
             management_info_out[serial_number].update({key: case_response_dict[management_info_spec[key]]
                                                        for key in management_info_spec.keys()})
 
-    # Output dictionary as json
-    with open('test.json', 'w') as f:
-        json.dump(management_info_out, f)
-
-    return
+    return management_info_out

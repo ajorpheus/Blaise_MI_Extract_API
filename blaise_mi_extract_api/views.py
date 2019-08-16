@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for
+from flask import Blueprint, render_template, request, url_for, jsonify
 from flask_login import login_required
 from blaise_mi_extract_api.models import ApiKey
 from blaise_mi_extract_api.extensions import login_manager
@@ -12,10 +12,11 @@ api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='tem
 @api_view.route('/example_route', methods=['GET'])
 @login_required
 def example_route():
-    name = request.args.get('name', '')
+    # Determine tla and field periods required (this needs to be changed to listen to rabbitmq)
     mi_query = query_tla_field_period()
-    managment_info = map_to_management_info(mi_query)
-    return 'Hello ' + name
+
+    management_info_out = map_to_management_info(mi_query)
+    return jsonify(management_info_out)
 
 
 @login_manager.request_loader
