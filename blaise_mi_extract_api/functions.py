@@ -1,5 +1,5 @@
 from blaise_mi_extract_api.extensions import db
-from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument
+from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample
 import json
 import ast
 
@@ -21,9 +21,9 @@ def query_tla_field_period():
     field_period = info_request_spec.get('field_period')
 
     # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period
-    response_query = db.session.query(Case, CaseResponse)\
-        .outerjoin(CaseResponse, Case.id == CaseResponse.case_id)\
-        .join(Survey, Case.survey_id == Survey.id)\
+    response_query = db.session.query(Case, CaseResponse) \
+        .outerjoin(CaseResponse, Case.id == CaseResponse.case_id) \
+        .join(Survey, Case.survey_id == Survey.id) \
         .join(FieldPeriod, Case.field_period_id == FieldPeriod.id)
 
     # Filter by tla
@@ -35,7 +35,7 @@ def query_tla_field_period():
     return response_query
 
 
-def gather_management_info(instrument_id):
+def gather_management_info_spec(instrument_id):
     # Given an instrument_id, returns a dictionary with the mi_spec (managment_info) for that
     # instrument_id
 
@@ -47,49 +47,47 @@ def gather_management_info(instrument_id):
     return management_info
 
 
-def remove_field_from_management_info():
-    # Given a dictionary with mi_spec and list of fields to remove, and updated dictionary is returned without those
-    # fields
-    return
-
-
-def map_to_management_info(mi_query):
-    # Assumes the query
-    case_list = mi_query.all()
+def map_to_management_info(management_info_query):
+    case_list = management_info_query.all()
 
     # Create dictionary with management information requirements, i.e. output fields required for a given instrument
     if len(case_list) != 0:
-        management_info = gather_management_info(case_list[0].Case.instrument_id)
+        management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id)
     else:
         return
 
-    my_dict = {}
+    management_info_out = {}
 
     for i, val in enumerate(case_list):
-        case = case_list[i]
 
-        serial_number = case.Case.serial_number
-        case_response_block = case.CaseResponse
+        case_table = case_list[i]
+        serial_number = case_table.Case.serial_number
+        case_response_block = case_table.CaseResponse
 
-        # Default output for cases
-        my_dict[serial_number] = {"HHOLD": case.Case.household,
-                                  "INTNUM": case.Case.interviewer_id,
-                                  "HOUT": case.Case.outcome_code}
+        sample = db.session.query(Sample) \
+            .filter(Sample.id == case_table.Case.sample_id).first()
+
+        # Default output for cases (following CMS
+        # https://collaborate2.ons.gov.uk/confluence/display/QSS/Blaise+5+Management+Information+%28MI%29+Extract )
+        management_info_out[serial_number] = {"QUOTA": sample.quota,
+                                              "ADDRESS": sample.addressno,
+                                              "HHOLD": case_table.Case.household,
+                                              "INTNUM": case_table.Case.interviewer_id,
+                                              "HOUT": case_table.Case.outcome_code}
 
         if case_response_block is None:
-            my_dict[serial_number].update({key: 'NULL' for key in management_info.keys()})
+            management_info_out[serial_number].update({key: 'NULL' for key in management_info_spec.keys()})
         else:
             # Dictionary with all response_data for a given case
             case_response_dict = ast.literal_eval(case_response_block.response_data)
 
             # Find keys in case_response_dict which match values in management_info
             # Create {management_info key : case_response_dict value}
-            my_dict[serial_number] = {key: case_response_dict[management_info[key]] for key in management_info.keys()}
-
+            management_info_out[serial_number].update({key: case_response_dict[management_info_spec[key]]
+                                                       for key in management_info_spec.keys()})
 
     # Output dictionary as json
     with open('test.json', 'w') as f:
-        json.dump(my_dict, f)
+        json.dump(management_info_out, f)
 
     return
-
