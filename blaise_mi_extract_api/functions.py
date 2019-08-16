@@ -12,7 +12,7 @@ def get_json():
     return message
 
 
-def query_management_info():
+def query_tla_field_period():
     # Based on the survey and field period requested by json file, a query for matching responses is returned (even
     # if ones for which the response_data is empty)
 
@@ -21,23 +21,30 @@ def query_management_info():
     field_period = info_request_spec.get('field_period')
 
     # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period
-    response = db.session.query(Case, CaseResponse)\
+    response_query = db.session.query(Case, CaseResponse)\
         .outerjoin(CaseResponse, Case.id == CaseResponse.case_id)\
         .join(Survey, Case.survey_id == Survey.id)\
         .join(FieldPeriod, Case.field_period_id == FieldPeriod.id)
 
     # Filter by tla
-    response = response.filter(Survey.tla == survey_tla)
+    response_query = response_query.filter(Survey.tla == survey_tla)
 
     # Filter by field period
-    response = response.filter(FieldPeriod.stage == field_period)
+    response_query = response_query.filter(FieldPeriod.stage == field_period)
 
-    return response
+    return response_query
 
 
-def gather_management_info():
-    # Given a query, returns a dictionary based on mi_spec
-    return
+def gather_management_info(instrument_id):
+    # Given an instrument_id, returns a dictionary with the mi_spec (managment_info) for that
+    # instrument_id
+
+    management_info = db.session.query(Instrument.MI_spec) \
+        .filter(Instrument.id == instrument_id).first()
+
+    # Dictionary with management information specification
+    management_info = ast.literal_eval(management_info.MI_spec)
+    return management_info
 
 
 def remove_field_from_management_info():
@@ -52,21 +59,25 @@ def map_to_management_info(mi_query):
 
     # Create dictionary with management information requirements, i.e. output fields required for a given instrument
     if len(case_list) != 0:
-        management_info = db.session.query(Instrument.MI_spec) \
-            .filter(Instrument.id == case_list[0].Case.instrument_id).first()
+        management_info = gather_management_info(case_list[0].Case.instrument_id)
     else:
         return
 
-    # Dictionary with management information requirements
-    management_info = ast.literal_eval(management_info.MI_spec)
     my_dict = {}
 
     for i, val in enumerate(case_list):
-        serial_number = case_list[i].Case.serial_number
-        case_response_block = case_list[i].CaseResponse
+        case = case_list[i]
+
+        serial_number = case.Case.serial_number
+        case_response_block = case.CaseResponse
+
+        # Default output for cases
+        my_dict[serial_number] = {"HHOLD": case.Case.household,
+                                  "INTNUM": case.Case.interviewer_id,
+                                  "HOUT": case.Case.outcome_code}
 
         if case_response_block is None:
-            my_dict[serial_number] = {key: 'NULL' for key in management_info.keys()}
+            my_dict[serial_number].update({key: 'NULL' for key in management_info.keys()})
         else:
             # Dictionary with all response_data for a given case
             case_response_dict = ast.literal_eval(case_response_block.response_data)
@@ -74,6 +85,7 @@ def map_to_management_info(mi_query):
             # Find keys in case_response_dict which match values in management_info
             # Create {management_info key : case_response_dict value}
             my_dict[serial_number] = {key: case_response_dict[management_info[key]] for key in management_info.keys()}
+
 
     # Output dictionary as json
     with open('test.json', 'w') as f:

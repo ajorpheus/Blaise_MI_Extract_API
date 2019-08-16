@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, url_for
 from flask_login import login_required
 from blaise_mi_extract_api.models import ApiKey
 from blaise_mi_extract_api.extensions import login_manager
-from blaise_mi_extract_api.functions import query_management_info, map_to_management_info
+from blaise_mi_extract_api.functions import query_tla_field_period, map_to_management_info
 import base64
 
 
@@ -13,7 +13,7 @@ api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='tem
 @login_required
 def example_route():
     name = request.args.get('name', '')
-    mi_query = query_management_info()
+    mi_query = query_tla_field_period()
     managment_info = map_to_management_info(mi_query)
     return 'Hello ' + name
 
