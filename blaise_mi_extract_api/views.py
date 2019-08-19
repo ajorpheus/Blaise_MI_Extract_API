@@ -9,9 +9,9 @@ import base64
 api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='templates')
 
 
-@api_view.route('/manage_info/<survey_tla>/<field_period>', methods=['GET'])
+@api_view.route('/management_information/<survey_tla>/<field_period>', methods=['GET'])
 @login_required
-def manage_info(survey_tla, field_period):
+def management_information(survey_tla, field_period):
     # Create query from tla and field periods requested
     mi_query = query_tla_field_period(survey_tla, field_period)
 
