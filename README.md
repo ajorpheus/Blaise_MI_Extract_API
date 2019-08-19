@@ -5,7 +5,7 @@ This is an API to access surveys' Management Information (MI). This resource aim
 - [ ] Provide IP address
 - [ ] Determine how to provide API key
 
-#### Using the API
+### Using the API
 To access the MI for a specific survey, go to: 
 ```
    http://<IP_address>/management_information/<Survey_TLA>/<Field_Period>?api_key=<API_key>
@@ -32,12 +32,12 @@ The following output will be provided for each <serial_number> in the database:
 }
 ```
 
-#### Development environment
+### Development environment
 
-##### Prerequisites
+#### Prerequisites
 - Install Docker
 
-##### Setup
+#### Setup
 This setup assumes you're using a local database
 1. Clone this project ```git clone https://github.com/ONSdigital/Blaise_Survey_Manager.git```
  
@@ -58,3 +58,5 @@ This setup assumes you're using a local database
     
     Upgrade the database structure ```alembic upgrade head```.
 5. Run the application ```flask run```
+
+For the OPN1901 survey, the application should be viewable at ```http://localhost:5000/management_information/opn/2001?api_key=123456```
