@@ -9,11 +9,11 @@ import base64
 api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='templates')
 
 
-@api_view.route('/example_route', methods=['GET'])
+@api_view.route('/manage_info/<survey_tla>/<field_period>', methods=['GET'])
 @login_required
-def example_route():
-    # Determine tla and field periods required (this needs to be changed to listen to rabbitmq)
-    mi_query = query_tla_field_period()
+def manage_info(survey_tla, field_period):
+    # Create query from tla and field periods requested
+    mi_query = query_tla_field_period(survey_tla, field_period)
 
     management_info_out = map_to_management_info(mi_query)
     return jsonify(management_info_out)

@@ -12,13 +12,9 @@ def get_json():
     return message
 
 
-def query_tla_field_period():
-    # Based on the survey and field period requested by json file, a query for matching responses is returned (even
+def query_tla_field_period(survey_tla, field_period):
+    # Based on the survey and field period provided, a query for matching responses is returned (even
     # if ones for which the response_data is empty)
-
-    info_request_spec = get_json()
-    survey_tla = info_request_spec.get('tla')
-    field_period = info_request_spec.get('field_period')
 
     # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period
     response_query = db.session.query(Case, CaseResponse) \
@@ -36,7 +32,7 @@ def query_tla_field_period():
 
 
 def gather_management_info_spec(instrument_id):
-    # Given an instrument_id, returns a dictionary with the mi_spec (managment_info) for that
+    # Given an instrument_id, returns a dictionary with the mi_spec (management_info) for that
     # instrument_id
 
     management_info = db.session.query(Instrument.MI_spec) \
