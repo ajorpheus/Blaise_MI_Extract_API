@@ -72,7 +72,7 @@ class DictMixin(object):
 
 class Sample(db.Model, DictMixin):
     id = db.Column(db.Integer(), primary_key=True)
-    sample_header_id = db.Column(db.Integer(), db.ForeignKey('sample_header.id'))
+    # sample_header_id = db.Column(db.Integer(), db.ForeignKey('sample_header.id'))
     serial = db.Column(db.Integer())
     surveyyear = db.Column(db.String(20))
     tla = db.Column(db.String(3))

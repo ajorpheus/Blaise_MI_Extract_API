@@ -1,15 +1,6 @@
 from blaise_mi_extract_api.extensions import db
 from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample
-import json
 import ast
-
-
-# Temporary function to get json request for Management Information.
-# The actual request will come from rabbitmq?
-def get_json():
-    with open('examples/message.json', 'r') as f:
-        message = json.load(f)
-    return message
 
 
 def query_tla_field_period(survey_tla, field_period):
@@ -49,8 +40,6 @@ def map_to_management_info(management_info_query):
     # Create dictionary with management information requirements, i.e. output fields required for a given instrument
     if len(case_list) != 0:
         management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id)
-    else:
-        return
 
     management_info_out = {}
 
@@ -71,7 +60,7 @@ def map_to_management_info(management_info_query):
                                               "INTNUM": case_table.Case.interviewer_id,
                                               "HOUT": case_table.Case.outcome_code}
 
-        if case_response_block is None:
+        if case_response_block.response_data is None:
             management_info_out[serial_number].update({key: 'NULL' for key in management_info_spec.keys()})
         else:
             # Dictionary with all response_data for a given case

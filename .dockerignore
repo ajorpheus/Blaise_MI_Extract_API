@@ -6,7 +6,7 @@ env*
 venv
 .env
 
-tests
+blaise_mi_extract_api/tests
 /*/tests/
 /*/*/tests/
 /blaise_survey_manager/survey_config/tests/

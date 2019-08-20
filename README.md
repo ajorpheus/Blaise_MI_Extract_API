@@ -31,6 +31,7 @@ The following output will be provided for each <serial_number> in the database:
   }
 }
 ```
+Some of the fields are part of the default output. Additional fields can be requested in the MI_spec of each instrument. 
 
 ### Development environment
 
