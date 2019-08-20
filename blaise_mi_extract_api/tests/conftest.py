@@ -53,7 +53,7 @@ def add_response_to_db():
     case.sample_id = 5
     case.household = ''
     case.interviewer_id = ''
-    case.outcome_code = '10'
+    case.outcome_code = 10
     db.session.add(case)
 
     case_response = CaseResponse()
@@ -67,7 +67,7 @@ def add_response_to_db():
 
     sample = Sample()
     sample.id = case.sample_id
-    sample.quota = 7
+    sample.quota = '7'
     sample.addresno = ''
     db.session.add(sample)
 
