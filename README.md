@@ -1,7 +1,7 @@
 # Blaise_MI_Extract_API
 This is an API to access surveys' Management Information (MI). This resource aims to provide the information required by the Social survey Division MI Hub. 
 #### To do
-- [ ] Narrow down requirements from MI Hub
+- [ ] Narrow down requirements from MI Hub (Serial number or Case ID?)
 - [ ] Provide IP address
 - [ ] Determine how to provide API key
 
@@ -40,7 +40,7 @@ Some of the fields are part of the default output. Additional fields can be requ
 
 #### Setup
 This setup assumes you're using a local database
-1. Clone this project ```git clone https://github.com/ONSdigital/Blaise_Survey_Manager.git```
+1. Clone this project ```git clone https://github.com/ONSdigital/Blaise_MI_Extract_API.git```
  
 2. Create a .env file and add the settings:
     ```.env
