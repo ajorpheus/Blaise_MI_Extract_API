@@ -1,5 +1,5 @@
 pytest
-
+alembic==1.0.11
 Click==7.0
 Flask==1.1.1
 Flask-Caching==1.7.2
