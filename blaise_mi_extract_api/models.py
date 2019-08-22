@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, BOOLEAN, DATETIME, TEXT
+from sqlalchemy import Column, Integer, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 
 from blaise_mi_extract_api.extensions import db

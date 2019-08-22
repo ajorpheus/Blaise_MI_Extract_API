@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request, url_for, jsonify, abort
-from flask_login import login_required
-from blaise_mi_extract_api.models import ApiKey
-from blaise_mi_extract_api.extensions import login_manager
-from blaise_mi_extract_api.functions import query_case_list, map_to_management_info
 import base64
+
+from flask import Blueprint, jsonify, abort
+from flask_login import login_required
+
+from blaise_mi_extract_api.extensions import login_manager
+from blaise_mi_extract_api.functions import map_to_management_info
+from blaise_mi_extract_api.models import ApiKey
 
 api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='templates')
 
@@ -17,10 +19,8 @@ def data_not_found(e):
 @api_view.route('/management_information/<survey_tla>/<field_period>', methods=['GET'])
 @login_required
 def management_information(survey_tla, field_period):
-    # Create query from tla and field periods requested
-    mi_query = query_case_list(survey_tla, field_period)
 
-    management_info_out = map_to_management_info(mi_query)
+    management_info_out = map_to_management_info(survey_tla, field_period)
 
     if management_info_out is None:
         abort(404, description='Check that the survey_tla (' + survey_tla +

@@ -1,51 +1,71 @@
-import ast
 import json
 
-from blaise_mi_extract_api.extensions import db
+from blaise_mi_extract_api.models import db
 from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample
 
 
-def query_case_list(survey_tla, field_period, phase="Live"):
-    # Based on the survey and field period provided, a query for matching responses is returned (even
-    # if ones for which the response_data is empty)
+def build_query_for_case_list(survey_tla, field_period, phase="Live"):
+    """
+    Build a query based on the survey_tla and field_period provided. The query will include data for which the
+    case_response is empty
 
-    # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period
+    Parameters:
+        survey_tla -- Three letter acronym for a survey e.g. 'OPN'
+        field_period -- Format yymm e.g. '1901'
+        phase -- e.g. 'Live', 'Training' (default: 'Live')
+    Returns:
+        response_query -- A BaseQuery object
+
+    Example usage:
+    - The following call will return all rows with 'Live' cases matching OPN2001
+        case_list = build_query_for_case_list('OPN', '2001').all()
+    """
+
+    # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period and
+    # filter by survey_tla, field_period and phase
     response_query = db.session.query(Case, CaseResponse, Sample.quota, Sample.addressno) \
         .outerjoin(CaseResponse, Case.id == CaseResponse.case_id) \
         .outerjoin(Sample, Case.sample_id == Sample.id) \
         .join(Survey, Case.survey_id == Survey.id) \
-        .join(FieldPeriod, Case.field_period_id == FieldPeriod.id)
-
-    # Filter by tla
-    response_query = response_query.filter(Survey.tla == survey_tla)
-
-    # Filter by field period
-    response_query = response_query.filter(FieldPeriod.stage == field_period)
-
-    # Filter for mode - 'Live' by default
-    response_query = response_query.filter(Case.phase == phase)
+        .join(FieldPeriod, Case.field_period_id == FieldPeriod.id)\
+        .filter(Survey.tla == survey_tla) \
+        .filter(FieldPeriod.stage == field_period) \
+        .filter(Case.phase == phase)
 
     return response_query
 
 
-def gather_management_info_spec(instrument_id):
-    # Given an instrument_id, returns a dictionary with the mi_spec (management_info) for that
-    # instrument_id
+def gather_management_info_spec(instrument_id, database=None):
+    """
+    Queries a database to obtain the management information specification associated with an instrument.
 
-    management_info = db.session.query(Instrument.MI_spec) \
+    Parameters:
+        instrument_id -- the id for an instrument database -- Database containing the instrument
+    Returns:
+        management_info -- Dictionary containing the management information specification. If the database is not
+        specified, it returns an empty dictionary
+
+    """
+    if database is None:
+        management_info = {}
+        return management_info
+
+    management_info = database.session.query(Instrument.MI_spec) \
         .filter(Instrument.id == instrument_id).first()
 
     # Dictionary with management information specification
     management_info = json.loads(management_info.MI_spec)
+
     return management_info
 
 
-def map_to_management_info(management_info_query):
-    case_list = management_info_query.all()
+def map_to_management_info(survey_tla, field_period):
+
+    case_list = build_query_for_case_list(survey_tla, field_period).all()
 
     # Create dictionary with management information requirements, i.e. output fields required for a given instrument
     if len(case_list) != 0:
-        management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id)
+        management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id, db)
     else:
         return None
 
