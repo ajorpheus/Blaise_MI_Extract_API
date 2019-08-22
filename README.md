@@ -5,6 +5,7 @@ This is an API to access surveys' Management Information (MI). This resource aim
 - [ ] Narrow down requirements from MI Hub (Serial number or Case ID?)
 - [ ] Provide IP address
 - [ ] Determine how to provide API key
+- [ ] Do we need to integrate it with BSM?
 
 ### Using the API
 To access the MI for a specific survey, go to: 
