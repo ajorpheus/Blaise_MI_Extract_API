@@ -39,7 +39,7 @@ def add_response_to_db():
 
     instrument = Instrument()
     instrument.id = 1
-    instrument.MI_spec = "{'Name': 'Person.FirstName'}"
+    instrument.MI_spec = '{"Name": "Person.FirstName"}'
     instrument.survey_id = survey.id
     instrument.field_period_id = 1
     db.session.add(instrument)
@@ -54,6 +54,7 @@ def add_response_to_db():
     case.household = ''
     case.interviewer_id = ''
     case.outcome_code = 10
+    case.phase = 'Live'
     db.session.add(case)
 
     case_response = CaseResponse()

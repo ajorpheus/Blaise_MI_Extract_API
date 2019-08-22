@@ -23,7 +23,7 @@ class TestURLs:
     
     def test_output_fields_correct(self, client):
         url_data = client.get('/management_information/OPN/2001?api_key=123456')
-        data = url_data.json
+        data = json.loads(url_data.json)
         assert data['1234']['HOUT'] == 10
         assert data['1234']['QUOTA'] == '7'
 

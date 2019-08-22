@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, url_for, jsonify, abort
 from flask_login import login_required
 from blaise_mi_extract_api.models import ApiKey
 from blaise_mi_extract_api.extensions import login_manager
-from blaise_mi_extract_api.functions import query_tla_field_period, map_to_management_info
+from blaise_mi_extract_api.functions import query_case_list, map_to_management_info
 import base64
 
 api_view = Blueprint('api_views', __name__, url_prefix="/", template_folder='templates')
@@ -18,12 +18,11 @@ def data_not_found(e):
 @login_required
 def management_information(survey_tla, field_period):
     # Create query from tla and field periods requested
-    mi_query = query_tla_field_period(survey_tla, field_period)
+    mi_query = query_case_list(survey_tla, field_period)
 
-    case_list = mi_query.all()
-    if len(case_list) != 0:
-        management_info_out = map_to_management_info(mi_query)
-    else:
+    management_info_out = map_to_management_info(mi_query)
+
+    if management_info_out is None:
         abort(404, description='Check that the survey_tla (' + survey_tla +
                                ') and the field period (' + field_period + ') are correct')
     return jsonify(management_info_out)
