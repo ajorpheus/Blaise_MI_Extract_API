@@ -39,7 +39,7 @@ def add_response_to_db():
 
     instrument = Instrument()
     instrument.id = 1
-    instrument.MI_spec = '{"Name": "Person.FirstName"}'
+    instrument.MI_spec = '{"serial_number": "QID.Case_ID"}'
     instrument.survey_id = survey.id
     instrument.field_period_id = 1
     db.session.add(instrument)
@@ -48,10 +48,10 @@ def add_response_to_db():
     case.id = 1
     case.survey_id = survey.id
     case.instrument_id = instrument.id
-    case.serial_number = '1234'
+    case.primary_key = 1234
     case.field_period_id = 1
     case.sample_id = 5
-    case.household = ''
+    case.household = '2'
     case.interviewer_id = ''
     case.outcome_code = 10
     case.phase = 'Live'
