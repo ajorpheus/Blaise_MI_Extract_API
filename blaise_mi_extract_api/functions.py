@@ -73,26 +73,25 @@ def map_to_management_info(survey_tla, field_period):
 
     for row in case_list:
 
-        serial_number = row.Case.serial_number
+        primary_key = row.Case.primary_key
         case_response_block = row.CaseResponse
 
         # Default output for cases (following CMS
         # https://collaborate2.ons.gov.uk/confluence/display/QSS/Blaise+5+Management+Information+%28MI%29+Extract )
-        management_info_out[serial_number] = {"QUOTA": row.quota,
+        management_info_out[primary_key] = {"QUOTA": row.quota,
                                               "ADDRESS": row.addressno,
                                               "HHOLD": row.Case.household,
-                                              "INTNUM": row.Case.interviewer_id,
-                                              "HOUT": row.Case.outcome_code}
+                                              "INTNUM": row.Case.interviewer_id}
 
         if case_response_block is None or case_response_block.response_data is None:
-            management_info_out[serial_number].update({key: None for key in management_info_spec.keys()})
+            management_info_out[primary_key].update({key: None for key in management_info_spec.keys()})
         else:
             # Dictionary with all response_data for a given case
             case_response_dict = json.loads(case_response_block.response_data)
 
             # Find keys in case_response_dict which match values in management_info
             # Create {management_info key : case_response_dict value}
-            management_info_out[serial_number].update({key: case_response_dict[management_info_spec[key]]
+            management_info_out[primary_key].update({key: case_response_dict[management_info_spec[key]]
                                                        for key in management_info_spec.keys()})
 
     return json.dumps(management_info_out)

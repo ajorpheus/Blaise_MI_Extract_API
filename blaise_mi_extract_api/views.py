@@ -25,7 +25,7 @@ def management_information(survey_tla, field_period):
     if management_info_out is None:
         abort(404, description='Check that the survey_tla (' + survey_tla +
                                ') and the field period (' + field_period + ') are correct')
-    return jsonify(management_info_out)
+    return management_info_out
 
 
 @login_manager.request_loader

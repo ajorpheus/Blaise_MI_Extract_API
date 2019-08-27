@@ -19,10 +19,10 @@ You will need to specified the fields in <b>< ></b> as described in the followin
 | Field_Period | Format yymm - Year and month when the survey was carried out| 2001 (January 2020) |
 | API_key | Key to be able to access records.
 
-The following output will be provided for each <serial_number> in the database:
+The following output will be provided for each <primary_key> in the database:
 ```json
 {
-  "<serial_number>": {
+  "<primary_key>": {
     "ADDRESS": "<address>", 
     "HHOLD": "<hhold>", 
     "HOUT": "<hout>", 
