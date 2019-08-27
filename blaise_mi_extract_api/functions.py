@@ -54,7 +54,10 @@ def gather_management_info_spec(instrument_id, database=None):
         .filter(Instrument.id == instrument_id).first()
 
     # Dictionary with management information specification
-    management_info = json.loads(management_info.MI_spec)
+    if not management_info.MI_spec:
+        management_info = {}
+    else:
+        management_info = json.loads(management_info.MI_spec)
 
     return management_info
 

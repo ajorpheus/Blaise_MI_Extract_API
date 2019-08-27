@@ -31,6 +31,13 @@ class TestURLs:
         assert data['1234']['serial_number'] is None
 
 
-
-
+@pytest.mark.usefixtures('client', 'add_response_to_db_no_mi')
+def test_output_from_undefined_mi_spec(client):
+    url_data = client.get('/management_information/OPN/2001?api_key=123456')
+    data = json.loads(url_data.data)
+    assert data['1234']['QUOTA'] == '7'
+    assert data['1234']['ADDRESS'] is None
+    assert data['1234']['HHOLD'] == 2
+    assert data['1234']['INTNUM'] == ''
+    # assert data['1234']['serial_number'] is None
 
