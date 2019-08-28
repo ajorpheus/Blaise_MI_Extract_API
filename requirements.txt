@@ -10,7 +10,8 @@ itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
 pika==1.1.0
-PyMySQL==0.9.3
 python-dotenv==0.10.3
 SQLAlchemy==1.3.6
 Werkzeug==0.15.5
+pyodbc==4.0.27
+pymssql==2.1.4
