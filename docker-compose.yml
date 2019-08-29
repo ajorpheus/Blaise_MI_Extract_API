@@ -1,24 +1,24 @@
 version: '3.3'
 
 services:
-
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: "no"
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2017-latest"
     ports:
-      - 3306:3306
+      - 1433:1433
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: bsmdb
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "example123!"
     volumes:
-        - db_data:/var/lib/mysql
+      - sqlserver:/var/opt/mssql
 
-  adminer:
-    image: adminer
-    restart: "no"
-    ports:
-      - 8080:8080
+  db_migrate:
+    image: "onsdigital/blaise-database-migrations:latest"
+    restart: on-failure
+    environment:
+      SQLALCHEMY_DATABASE_URI: 'mssql+pyodbc://sa:example123!@host.docker.internal:1433/bsmdb?driver=ODBC+Driver+17+for+SQL+Server'
+    depends_on:
+      - mssql
 
 volumes:
-  db_data:
+  sqlserver:
+
