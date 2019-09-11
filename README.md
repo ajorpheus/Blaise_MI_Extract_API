@@ -1,8 +1,8 @@
 # Blaise_MI_Extract_API
 This is an API to access surveys' Management Information (MI). This resource aims to provide the information required by the Social survey Division MI Hub. 
 #### To do
-- [ ] Figure out why ```Flask run``` does not work
-- [ ] Narrow down requirements from MI Hub (Serial number or Case ID?)
+- [ ] Figure out why ```flask run``` does not work
+- [X] Narrow down requirements from MI Hub (Serial number or Case ID?): agreed to use Primary Key (int)
 - [ ] Provide IP address
 - [ ] Determine how to provide API key
 
@@ -19,7 +19,7 @@ You will need to specified the fields in <b>< ></b> as described in the followin
 | Field_Period | Format yymm - Year and month when the survey was carried out| 2001 (January 2020) |
 | API_key | Key to be able to access records.
 
-The following output will be provided for each <primary_key> in the database:
+The following default output will be provided for each <primary_key> in the database:
 ```json
 [
   {
@@ -30,15 +30,31 @@ The following output will be provided for each <primary_key> in the database:
   }
 ]
 ```
-Some of the fields are part of the default output. Additional fields can be requested in the MI_spec of each instrument. 
+Additional fields can be requested in the MI_spec of each instrument (via the Blaise Survey Manager Website). 
 
 ### Development environment
 
 #### Prerequisites
-- Install Docker
+- Install Docker.
+- Install HeidiSQL, SSMS or any other administration tool with MS SQL support. 
+
+#### Setup (Docker)
+1. Set up the backing services by cloning the repository https://github.com/ONSdigital/Blaise_Developer_Services
+and following the setup instructions. This will setup containers for the different services, including one for this API. 
+Ensure you have an empty database called 'bsmdb'. You can do this using HeidiSQL.
+
+2. Add the API_key to the bsm.api_key table in your database.
+3. Navigate to the URL. For example, for the OPN1901 survey, the application should be viewable at http://localhost:5001/management_information/opn/2001?api_key=123456
+
+##### Having issues?
+- If your database is empty, you can upload sample data Blaise Survey Manager: http://localhost:5000
+- To debug the API, first stop the container: ```docker-compose stop bmie```;
+ then you should be able to run the website in your IDE.
+- When restarting the database container, you might need to close and reopen HeidiSQL.
 
 
-#### Setup
+
+#### Setup (manual)
 This setup assumes you're using a local database
 1. Clone this project ```git clone https://github.com/ONSdigital/Blaise_MI_Extract_API.git```
 
@@ -55,8 +71,8 @@ This setup assumes you're using a local database
  
 4. Create a .env file and add the settings:
     ```.env
-    SQLALCHEMY_DATABASE_URI='mysql+pymysql://{user}:{password}@{hostname}:{port}/{database}'
-    SECRET_KEY='{secret_key}'  
+    SQLALCHEMY_DATABASE_URI='mssql+pyodbc://{user}:{password}@{hostname}:{port}/{database}'
+    SECRET_KEY='{Your_secret_key}'  
     ENV='DEV'  
     ```
     for example: 
@@ -65,9 +81,16 @@ This setup assumes you're using a local database
     SECRET_KEY='123456'
     ENV='DEV'
     ```
-5. Setup the developer database using the developer services project.
-7. USe a sql management tool to add an api_key to the data base 'api_key' table 
-8. Run the application ```flask run``` - This does not work for me; instead I use PyCharm using a configuration where:
+   Make sure these settings match the docker-compose.yml
+5. Start Docker and run ```docker-compose up -d```
+6. Create an empty database called 'bsmdb'. In HeidiSQL you can use the following settings:
+
+    ![picture](settings_templates/img/bsmdb_HeidiSQL.PNG)
+
+    The containers from step 5 should be able to see this database and update the the database structure. 
+    If you do not have any test data on your database, you can upload cases through Blaise Survey Manager.
+7. Add the API_key to the bsm.api_key table in your database. 
+8. Run the application - I use PyCharm using a configuration where:
     ```text
     Module name: flask
     Parameters: run
