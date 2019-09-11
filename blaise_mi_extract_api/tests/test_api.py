@@ -24,19 +24,17 @@ class TestURLs:
     def test_output_from_undefined_mi_spec(self, client):
         url_data = client.get('/management_information/OPN/2001?api_key=123456')
         data = json.loads(url_data.data)
-        assert data['1234']['QUOTA'] == '7'
-        assert data['1234']['ADDRESS'] is None
-        assert data['1234']['HHOLD'] == 2
-        assert data['1234']['INTNUM'] == ''
+        assert data[0]['tla'] == 'OPN'
+        assert data[0]['field_period'] == '2001'
+        assert data[0]['primary_key'] ==1234
 
-    @pytest.mark.parametrize('add_response_to_db', [['{"serial_number": "QID.Case_ID"}']], indirect=True)
+    @pytest.mark.parametrize('add_response_to_db', [['{"serial_number": "qid.serial_number"}']], indirect=True)
     def test_output_fields_correct(self, client, add_response_to_db):
         url_data = client.get('/management_information/OPN/2001?api_key=123456')
         data = json.loads(url_data.data)
-        assert data['1234']['QUOTA'] == '7'
-        assert data['1234']['ADDRESS'] is None
-        assert data['1234']['HHOLD'] == 2
-        assert data['1234']['INTNUM'] == ''
-        assert data['1234']['serial_number'] is None
+        assert data[0]['tla'] == 'OPN'
+        assert data[0]['field_period'] == '2001'
+        assert data[0]['primary_key'] == 1234
+        assert data[0]['serial_number'] == '98765'
 
 

@@ -1,24 +1,13 @@
 version: '3.3'
 
 services:
-  mssql:
-    image: "mcr.microsoft.com/mssql/server:2017-latest"
+
+  bmie:
+    build: .
+    restart: "no"
     ports:
-      - 1433:1433
+      - 7000:5000
     environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "example123!"
-    volumes:
-      - sqlserver:/var/opt/mssql
-
-  db_migrate:
-    image: "onsdigital/blaise-database-migrations:latest"
-    restart: on-failure
-    environment:
+      ENV: 'DEV'
       SQLALCHEMY_DATABASE_URI: 'mssql+pyodbc://sa:example123!@host.docker.internal:1433/bsmdb?driver=ODBC+Driver+17+for+SQL+Server'
-    depends_on:
-      - mssql
-
-volumes:
-  sqlserver:
-
+      SECRET_KEY: 'You_Secret_Key'

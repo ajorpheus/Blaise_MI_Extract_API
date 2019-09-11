@@ -21,14 +21,14 @@ You will need to specified the fields in <b>< ></b> as described in the followin
 
 The following default output will be provided for each <primary_key> in the database:
 ```json
-{
-  "<primary_key>": {
-    "ADDRESS": "<address>", 
-    "HHOLD": "<hhold>",  
-    "INTNUM": "<intnum>", 
-    "QUOTA": "<quota>"
+[
+  {
+    "tla": "<tla>", 
+    "field_period": "<field_period>", 
+    "primary_key": "<primary_key>", 
+    "<MI Spec fields>": "<Response values>",
   }
-}
+]
 ```
 Additional fields can be requested in the MI_spec of each instrument (via the Blaise Survey Manager Website). 
 
@@ -77,7 +77,7 @@ This setup assumes you're using a local database
     ```
     for example: 
     ```.env
-    SQLALCHEMY_DATABASE_URI='mssql+pyodbc://sa:example123!@127.0.0.1:1433/bsmdb?driver=ODBC+Driver+17+for+SQL+Server'
+    SQLALCHEMY_DATABASE_URI='mssql+pymssql://sa:example123!@localhost:1433/bsmdb'
     SECRET_KEY='123456'
     ENV='DEV'
     ```
