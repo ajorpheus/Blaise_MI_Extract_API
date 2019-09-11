@@ -25,7 +25,6 @@ def build_query_for_case_list(survey_tla, field_period, phase="Live"):
     # filter by survey_tla, field_period and phase
     response_query = db.session.query(Case, CaseResponse) \
         .outerjoin(CaseResponse, Case.id == CaseResponse.case_id) \
-        .outerjoin(Sample, Case.sample_id == Sample.id) \
         .join(Survey, Case.survey_id == Survey.id) \
         .join(FieldPeriod, Case.field_period_id == FieldPeriod.id) \
         .filter(Survey.tla == survey_tla) \
@@ -74,43 +73,34 @@ def map_to_management_info(survey_tla, field_period):
     Returns:
         json.dumps(management_info_out) -- JSON formatted str containing the management information for each case
 
-    Example output:
-        If a single case were found, the output would be:
-        {"1234": {"QUOTA":"1", "ADDRESS":"2", "HHOLD":"1", "INTNUM": "123"}}
-        where 1234 is the primary_key.
     """
-
+    # get a list of cases
     case_list = build_query_for_case_list(survey_tla, field_period).all()
 
-    # Create dictionary with management information requirements, i.e. output fields required for a given instrument
-    if len(case_list) != 0:
-        management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id, db)
-    else:
+    if len(case_list) == 0:
         return None
 
-    management_info_out = {}
+    # Create dictionary with management information requirements, i.e. output fields required for a given instrument
+    management_info_spec = gather_management_info_spec(case_list[0].Case.instrument_id, db)
+
+    management_info_out = []
 
     for row in case_list:
-
-        primary_key = row.Case.primary_key
-        case_response_block = row.CaseResponse
-
         # Default output for cases (following CMS
         # https://collaborate2.ons.gov.uk/confluence/display/QSS/Blaise+5+Management+Information+%28MI%29+Extract )
-        management_info_out[primary_key] = {"QUOTA": row.Case.quota,
-                                            "ADDRESS": row.Case.address,
-                                            "HHOLD": row.Case.hhold,
-                                            "INTNUM": row.Case.interviewer_id}
+        management_info_record = {"tla": survey_tla,
+                                  "field_period": field_period,
+                                  "primary_key": row.Case.primary_key}
 
-        if case_response_block is None or case_response_block.response_data is None:
-            management_info_out[primary_key].update({key: None for key in management_info_spec.keys()})
+        if row.CaseResponse and row.CaseResponse.response_data:
+            case_response_dict = json.loads(row.CaseResponse.response_data)
         else:
-            # Dictionary with all response_data for a given case
-            case_response_dict = json.loads(case_response_block.response_data)
+            case_response_dict = dict()
 
-            # Find keys in case_response_dict which match values in management_info
-            # Create {management_info key : case_response_dict value}
-            management_info_out[primary_key].update({key: case_response_dict[management_info_spec[key]]
-                                                     for key in management_info_spec.keys()})
+        # Find keys in case_response_dict which match values in management_info
+        management_info_record.update({key: case_response_dict.get(management_info_spec[key], None)
+                                       for key in management_info_spec.keys()})
+
+        management_info_out.append(management_info_record)
 
     return json.dumps(management_info_out)
