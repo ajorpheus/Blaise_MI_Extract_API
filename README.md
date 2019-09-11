@@ -21,16 +21,14 @@ You will need to specified the fields in <b>< ></b> as described in the followin
 
 The following output will be provided for each <primary_key> in the database:
 ```json
-{
-  "<primary_key>": {
-    "ADDRESS": "<address>", 
-    "HHOLD": "<hhold>", 
-    "HOUT": "<hout>", 
-    "INTNUM": "<intnum>", 
-    "NAME": "<name>", 
-    "QUOTA": "<quota>"
+[
+  {
+    "tla": "<tla>", 
+    "field_period": "<field_period>", 
+    "primary_key": "<primary_key>", 
+    "<MI Spec fields>": "<Response values>",
   }
-}
+]
 ```
 Some of the fields are part of the default output. Additional fields can be requested in the MI_spec of each instrument. 
 
@@ -63,15 +61,12 @@ This setup assumes you're using a local database
     ```
     for example: 
     ```.env
-    SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:example@localhost:3306/bsmdb'
+    SQLALCHEMY_DATABASE_URI='mssql+pymssql://sa:example123!@localhost:1433/bsmdb'
     SECRET_KEY='123456'
     ENV='DEV'
     ```
-   Make sure these settings match the docker-compose.yml
-5. Start Docker and run ```docker-compose up -d``` which sets up images for Adminer and MySQL
-6. Upgrade the database structure ```alembic upgrade head```
-    If you do not have any test data on your database, you can upload cases through Blaise Survey Manager.
-7. Go to Adminer http://localhost:8080 and add an api_key to the data base by adding a 'New item' to the 'api_key' table 
+5. Setup the developer database using the developer services project.
+7. USe a sql management tool to add an api_key to the data base 'api_key' table 
 8. Run the application ```flask run``` - This does not work for me; instead I use PyCharm using a configuration where:
     ```text
     Module name: flask
