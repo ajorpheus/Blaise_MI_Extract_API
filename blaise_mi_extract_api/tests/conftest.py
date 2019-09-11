@@ -62,6 +62,7 @@ def add_response_to_db(request):
 
     case_response = CaseResponse()
     case_response.case_id = case.id
+    case_response.response_data = '{"qid.serial_number": "98765"}'
     db.session.add(case_response)
 
     field_period = FieldPeriod()
