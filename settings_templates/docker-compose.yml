@@ -2,23 +2,12 @@ version: '3.3'
 
 services:
 
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+  bmie:
+    build: .
     restart: "no"
     ports:
-      - 3306:3306
+      - 7000:5000
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: bsmdb
-    volumes:
-        - db_data:/var/lib/mysql
-
-  adminer:
-    image: adminer
-    restart: "no"
-    ports:
-      - 8080:8080
-
-volumes:
-  db_data:
+      ENV: 'DEV'
+      SQLALCHEMY_DATABASE_URI: 'mssql+pyodbc://sa:example123!@host.docker.internal:1433/bsmdb?driver=ODBC+Driver+17+for+SQL+Server'
+      SECRET_KEY: 'You_Secret_Key'

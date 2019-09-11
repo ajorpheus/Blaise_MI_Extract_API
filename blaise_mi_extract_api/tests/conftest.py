@@ -56,10 +56,13 @@ def add_response_to_db(request):
     case.interviewer_id = ''
     case.outcome_code = 10
     case.phase = 'Live'
+    case.quota = '7'
+    case.address = ''
     db.session.add(case)
 
     case_response = CaseResponse()
     case_response.case_id = case.id
+    case_response.response_data = '{"qid.serial_number": "98765"}'
     db.session.add(case_response)
 
     field_period = FieldPeriod()
@@ -69,8 +72,6 @@ def add_response_to_db(request):
 
     sample = Sample()
     sample.id = case.sample_id
-    sample.quota = '7'
-    sample.addresno = ''
     db.session.add(sample)
 
     db.session.commit()
