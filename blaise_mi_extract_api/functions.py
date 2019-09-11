@@ -23,7 +23,7 @@ def build_query_for_case_list(survey_tla, field_period, phase="Live"):
 
     # Collect all cases (with or without response) with their survey three letter acronym (tla) and field period and
     # filter by survey_tla, field_period and phase
-    response_query = db.session.query(Case, CaseResponse, Sample.quota, Sample.addressno) \
+    response_query = db.session.query(Case, CaseResponse) \
         .outerjoin(CaseResponse, Case.id == CaseResponse.case_id) \
         .outerjoin(Sample, Case.sample_id == Sample.id) \
         .join(Survey, Case.survey_id == Survey.id) \
@@ -97,9 +97,9 @@ def map_to_management_info(survey_tla, field_period):
 
         # Default output for cases (following CMS
         # https://collaborate2.ons.gov.uk/confluence/display/QSS/Blaise+5+Management+Information+%28MI%29+Extract )
-        management_info_out[primary_key] = {"QUOTA": row.quota,
-                                            "ADDRESS": row.addressno,
-                                            "HHOLD": row.Case.household,
+        management_info_out[primary_key] = {"QUOTA": row.Case.quota,
+                                            "ADDRESS": row.Case.address,
+                                            "HHOLD": row.Case.hhold,
                                             "INTNUM": row.Case.interviewer_id}
 
         if case_response_block is None or case_response_block.response_data is None:
