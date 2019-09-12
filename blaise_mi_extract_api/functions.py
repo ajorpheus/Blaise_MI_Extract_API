@@ -1,5 +1,6 @@
 import json
 
+from blaise_mi_extract_api.util.service_logging import log
 from blaise_mi_extract_api.models import db
 from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample
 
@@ -56,6 +57,7 @@ def gather_management_info_spec(instrument_id, database=None):
     # Dictionary with management information specification
     if not management_info.MI_spec:
         management_info = {}
+        log.warning("No management information requested")
     else:
         management_info = json.loads(management_info.MI_spec)
 
@@ -75,9 +77,11 @@ def map_to_management_info(survey_tla, field_period):
 
     """
     # get a list of cases
+    log.info("Extracting cases from database")
     case_list = build_query_for_case_list(survey_tla, field_period).all()
 
     if len(case_list) == 0:
+        log.warning("No cases found in the database matching " + survey_tla + field_period)
         return None
 
     # Create dictionary with management information requirements, i.e. output fields required for a given instrument
