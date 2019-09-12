@@ -20,6 +20,7 @@ def data_not_found(e):
 @api_view.route('/management_information/<survey_tla>/<field_period>', methods=['GET'])
 @login_required
 def management_information(survey_tla, field_period):
+    log.info("Requesting management information for survey_tla=" + survey_tla + " and field_period=" + field_period)
 
     management_info_out = map_to_management_info(survey_tla, field_period)
 
