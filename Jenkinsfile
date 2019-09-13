@@ -3,11 +3,7 @@ pipeline {
     stages {
         stage('PullDockerImage') {
             steps {
-               sh '''
-               pwd
-               ls
-               sh DockerPull.sh
-               '''
+               sh '''docker pull onsdigital/blaise-mi-extract-api:latest'''
            }
        }
     }
