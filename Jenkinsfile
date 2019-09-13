@@ -6,7 +6,7 @@ pipeline {
                sh '''
                pwd
                ls
-               DockerPull.sh
+               sh DockerPull.sh
                '''
            }
        }
