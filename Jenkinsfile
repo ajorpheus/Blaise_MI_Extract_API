@@ -2,8 +2,12 @@ pipeline {
     agent any
     stages {
         stage('PullDockerImage') {
-           steps {
-               sh('DockerPull.sh')
+            steps {
+               sh '''
+               ls
+               pwd
+               sh DockerPull.sh
+               '''
            }
        }
     }
