@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('PullDockerImage') {
            steps {
-               sh DockerPull.sh
+               sh '''ls'''
            }
        }
     }
