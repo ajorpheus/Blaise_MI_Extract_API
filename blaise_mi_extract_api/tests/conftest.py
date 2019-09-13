@@ -2,6 +2,7 @@ import pytest
 from blaise_mi_extract_api import create_app
 from blaise_mi_extract_api.models import db
 from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample, ApiKey
+from blaise_mi_extract_api.util.service_logging import log
 
 
 @pytest.fixture()

@@ -1,5 +1,6 @@
 import base64
 
+from blaise_mi_extract_api.util.service_logging import log
 from flask import Blueprint, jsonify, abort
 from flask_login import login_required
 
@@ -19,12 +20,15 @@ def data_not_found(e):
 @api_view.route('/management_information/<survey_tla>/<field_period>', methods=['GET'])
 @login_required
 def management_information(survey_tla, field_period):
+    log.info("Requesting management information for survey_tla=" + survey_tla + " and field_period=" + field_period)
 
     management_info_out = map_to_management_info(survey_tla, field_period)
 
     if management_info_out is None:
+        log.warning('No management info found for ' + survey_tla + field_period)
         abort(404, description='Check that the survey_tla (' + survey_tla +
                                ') and the field period (' + field_period + ') are correct')
+    log.info("Providing management information data")
     return management_info_out
 
 
@@ -33,8 +37,10 @@ def load_user_from_request(api_request):
     # first, try to login using the api_key url arg
     api_key_lookup = api_request.args.get('api_key')
     if api_key_lookup:
+        log.info("Checking database for api_key")
         api_key = ApiKey.query.filter_by(api_key=api_key_lookup).first()
         if api_key:
+            log.info("api_key approved")
             return api_key
 
     # next, try to login using Basic Auth
@@ -48,7 +54,10 @@ def load_user_from_request(api_request):
             pass
         api_key = ApiKey.query.filter_by(api_key=api_key_lookup).first()
         if api_key:
+            log.info("api_key approved")
             return api_key
+
+    log.warning('Authorization failed. Check the api_key')
 
     # finally, return None if both methods did not login the user
     return None
