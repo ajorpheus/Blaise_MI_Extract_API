@@ -4,9 +4,9 @@ pipeline {
         stage('PullDockerImage') {
             steps {
                sh '''
-               ls
                pwd
-               sh DockerPull.sh
+               ls
+               DockerPull.sh
                '''
            }
        }
