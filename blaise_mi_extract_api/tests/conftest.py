@@ -1,7 +1,7 @@
 import pytest
 from blaise_mi_extract_api import create_app
 from blaise_mi_extract_api.models import db
-from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample, ApiKey
+from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, ApiKey
 from blaise_mi_extract_api.util.service_logging import log
 
 
@@ -70,10 +70,6 @@ def add_response_to_db(request):
     field_period.id = case.field_period_id
     field_period.stage = '2001'
     db.session.add(field_period)
-
-    sample = Sample()
-    sample.id = case.sample_id
-    db.session.add(sample)
 
     db.session.commit()
 
