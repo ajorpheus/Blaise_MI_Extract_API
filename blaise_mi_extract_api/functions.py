@@ -2,7 +2,7 @@ import json
 
 from blaise_mi_extract_api.util.service_logging import log
 from blaise_mi_extract_api.models import db
-from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument, Sample
+from blaise_mi_extract_api.models import CaseResponse, Survey, Case, FieldPeriod, Instrument
 
 
 def build_query_for_case_list(survey_tla, field_period, phase="Live"):
