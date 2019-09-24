@@ -6,8 +6,8 @@ pipeline {
                sshagent(credentials: ['a069e490-f64f-47ca-b91f-61270cbd8d50']) {
                    sh 'ssh -o StrictHostKeyChecking=no s_blaise5_dev@blaisedk-d-01'
                    sh 'ssh -v s_blaise5_dev@blaisedk-d-01'
-                   sh 'docker pull docker-registry-1.ons.statistics.gov.uk/onsdigital/blaise-survey-manager:latest'
-                   sh 'docker images'
+                   sh 'ssh docker pull docker-registry-1.ons.statistics.gov.uk/onsdigital/blaise-survey-manager:latest'
+                   sh 'ssh docker images'
                }
            }
        }
