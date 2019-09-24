@@ -8,8 +8,7 @@ pipeline {
                    ssh -o StrictHostKeyChecking=no s_blaise5_dev@blaisedk-d-01 /bin/bash <<-INIT
                    ssh -v s_blaise5_dev@blaisedk-d-01'
                    ls
-INIT
-                   '''
+INIT'''
                }
            }
        }
